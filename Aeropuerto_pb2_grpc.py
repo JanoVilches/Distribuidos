@@ -44,3 +44,45 @@ def add_TorresServicer_to_server(servicer, server):
   generic_handler = grpc.method_handlers_generic_handler(
       'Torres', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))
+
+
+class EntrarStub(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def __init__(self, channel):
+    """Constructor.
+
+    Args:
+      channel: A grpc.Channel.
+    """
+    self.Aterrizar = channel.unary_unary(
+        '/Entrar/Aterrizar',
+        request_serializer=Aeropuerto__pb2.Avion.SerializeToString,
+        response_deserializer=Aeropuerto__pb2.AterrizarReply.FromString,
+        )
+
+
+class EntrarServicer(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def Aterrizar(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+
+def add_EntrarServicer_to_server(servicer, server):
+  rpc_method_handlers = {
+      'Aterrizar': grpc.unary_unary_rpc_method_handler(
+          servicer.Aterrizar,
+          request_deserializer=Aeropuerto__pb2.Avion.FromString,
+          response_serializer=Aeropuerto__pb2.AterrizarReply.SerializeToString,
+      ),
+  }
+  generic_handler = grpc.method_handlers_generic_handler(
+      'Entrar', rpc_method_handlers)
+  server.add_generic_rpc_handlers((generic_handler,))

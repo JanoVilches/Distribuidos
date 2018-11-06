@@ -13,6 +13,10 @@ message Destino {
     string destino = 1;
 }
 
-service Torres {
-    rpc Despegar(Avion) returns (Destino) {}
+message AterrizarReply{
+    int32 espera = 1;
+}
+
+service Entrar{
+    rpc Aterrizar(Avion) returns (AterrizarReply) {}
 }
