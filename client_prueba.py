@@ -1,25 +1,32 @@
 import grpc
 
 # import the generated classes
-import calculator_pb2
-import calculator_pb2_grpc
+import Aeropuerto_pb2
+import Aeropuerto_pb2_grpc
 
 # open a gRPC channel
 channel = grpc.insecure_channel('localhost:50051')
 
 # create a stub (client)
-stub = calculator_pb2_grpc.CalculatorStub(channel)
-stub2 = calculator_pb2_grpc.DespegueStub(channel)
+#stub = calculator_pb2_grpc.CalculatorStub(channel)
+stub2 = Aeropuerto_pb2_grpc.TorresStub(channel)
 
 # create a valid request message
-number = calculator_pb2.Number(value=16)
-avion = calculator_pb2.Avion(Aerolinea="LAN", codigo_avion="CLB1234", Peso=10000, combustible=200000, Torre_control_inicial="10.0.0.1", confirmacion=0)
+#number = calculator_pb2.Number(value=16)
+avion = Aeropuerto_pb2.Avion(aerolinea="LAN", codigo_avion="CLB1234", peso=10000, combustible=200000, torre_control_destino="Madrid")
 
 # make the call
-response = stub.SquareRoot(number)
-response1 = stub2.Despegar(avion)
+#response = stub.SquareRoot(number)
+response = stub2.Despegar(avion)
 
-avion.confirmacion = response1.confirmacion
-# et voilà
-print(response.value)
-print(avion)
+print("IP: " + response.destino)
+
+direccion = 'localhost:' + response.destino
+
+channel = grpc.insecure_channel(direccion)
+stub2 = Aeropuerto_pb2_grpc.TorresStub(channel)
+avion.torre_control_destino = "Sao Pablo"
+response = stub2.Despegar(avion)
+
+#print(response.value)
+print("IP: " + response.destino)

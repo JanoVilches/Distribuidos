@@ -5,8 +5,12 @@ import calculator_pb2 as calculator__pb2
 
 
 class DespegueStub(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """
+  service Arribo {
+  rpc Arribar(Llegada) returns (Llegada) {}
+  }
+
+  """
 
   def __init__(self, channel):
     """Constructor.
@@ -17,17 +21,21 @@ class DespegueStub(object):
     self.Despegar = channel.unary_unary(
         '/Despegue/Despegar',
         request_serializer=calculator__pb2.Avion.SerializeToString,
-        response_deserializer=calculator__pb2.Avion.FromString,
+        response_deserializer=calculator__pb2.Destino.FromString,
         )
 
 
 class DespegueServicer(object):
-  # missing associated documentation comment in .proto file
-  pass
+  """
+  service Arribo {
+  rpc Arribar(Llegada) returns (Llegada) {}
+  }
+
+  """
 
   def Despegar(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
+    """rpc Despegar(Avion) returns (Avion) {}
+    """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -38,7 +46,7 @@ def add_DespegueServicer_to_server(servicer, server):
       'Despegar': grpc.unary_unary_rpc_method_handler(
           servicer.Despegar,
           request_deserializer=calculator__pb2.Avion.FromString,
-          response_serializer=calculator__pb2.Avion.SerializeToString,
+          response_serializer=calculator__pb2.Destino.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
