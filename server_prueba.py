@@ -88,8 +88,8 @@ Aeropuerto_pb2_grpc.add_TorresServicer_to_server(TorresServicer(Torres, Inicial)
 
 # listen on port 50051
 print('Starting server')
-direccion = IP + ':50051'
-server.add_insecure_port(direccion)
+#direccion = IP + ':50051'
+server.add_insecure_port('localhost:' + IP)
 server.start()
 
 # since server.start() will not block,
