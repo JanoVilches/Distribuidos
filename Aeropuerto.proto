@@ -20,7 +20,15 @@ message AterrizarReply{
 }
 
 message DespegarReply{
+    /*
+    0 espera
+    >0 pista
+    -1 peso
+    -2 comb
+    -3 ambos
+    */
     int32 estado = 1;
+    string destino = 2;
 }
 
 message Empty{
