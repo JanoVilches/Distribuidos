@@ -29,6 +29,7 @@ message DespegarReply{
     */
     int32 estado = 1;
     string destino = 2;
+    int32 altura = 3
 }
 
 message Empty{
