@@ -10,10 +10,6 @@ message Avion {
     int32 pesoActual = 7;
 }
 
-message Destino {
-    string destino = 1;
-}
-
 message AterrizarReply{
     int32 altura = 1;
     int32 pista = 2;
@@ -41,9 +37,4 @@ service Torre{
     rpc Despegar (Avion) returns (DespegarReply) {}
     rpc Gate (Avion) returns (Empty) {}
     rpc Salir (avion) returns (Empty) {}
-}
-
-service Plane{
-    rpc Aterrizaje (AterrizarReply) returns (Empty) {}
-    rpc Despegue (DespegarReply) returns (Empty) {}
 }
