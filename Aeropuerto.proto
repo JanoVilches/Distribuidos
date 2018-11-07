@@ -5,10 +5,9 @@ message Avion {
     string codigo_avion = 2;
     int32 peso = 3;
     int32 combustible = 4;
-    string torre_control_inicial = 5;
-    string torre_control_destino = 6;
-    int32 combustibleActual = 7;
-    int32 pesoActual = 8;
+    string torre_control_destino = 5;
+    int32 combustibleActual = 6;
+    int32 pesoActual = 7;
 }
 
 message Destino {
