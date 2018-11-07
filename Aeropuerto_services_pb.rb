@@ -2,7 +2,7 @@
 # Source: Aeropuerto.proto for package ''
 
 require 'grpc'
-require 'Aeropuerto_pb'
+require './Aeropuerto_pb'
 
 module Torre
   class Service
