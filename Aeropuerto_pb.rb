@@ -9,13 +9,9 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     optional :codigo_avion, :string, 2
     optional :peso, :int32, 3
     optional :combustible, :int32, 4
-    optional :torre_control_inicial, :string, 5
-    optional :torre_control_destino, :string, 6
-    optional :combustibleActual, :int32, 7
-    optional :pesoActual, :int32, 8
-  end
-  add_message "Destino" do
-    optional :destino, :string, 1
+    optional :torre_control_destino, :string, 5
+    optional :combustibleActual, :int32, 6
+    optional :pesoActual, :int32, 7
   end
   add_message "AterrizarReply" do
     optional :altura, :int32, 1
@@ -23,13 +19,15 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
   add_message "DespegarReply" do
     optional :estado, :int32, 1
+    optional :destino, :string, 2
+    optional :altura, :int32, 3
+    optional :predecesor, :string, 4
   end
   add_message "Empty" do
   end
 end
 
 Avion = Google::Protobuf::DescriptorPool.generated_pool.lookup("Avion").msgclass
-Destino = Google::Protobuf::DescriptorPool.generated_pool.lookup("Destino").msgclass
 AterrizarReply = Google::Protobuf::DescriptorPool.generated_pool.lookup("AterrizarReply").msgclass
 DespegarReply = Google::Protobuf::DescriptorPool.generated_pool.lookup("DespegarReply").msgclass
 Empty = Google::Protobuf::DescriptorPool.generated_pool.lookup("Empty").msgclass
