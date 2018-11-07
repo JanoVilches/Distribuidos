@@ -7,12 +7,33 @@ message Avion {
     int32 combustible = 4;
     string torre_control_inicial = 5;
     string torre_control_destino = 6;
+    int32 combustibleActual = 7;
+    int32 pesoActual = 8;
 }
 
 message Destino {
     string destino = 1;
 }
 
-service Torres {
-    rpc Despegar(Avion) returns (Destino) {}
+message AterrizarReply{
+    int32 altura = 1;
+    int32 pista = 2;
+}
+
+message DespegarReply{
+    int32 estado = 1; //0:espera, >0:pista, -1:peso, -2:combustible, -3:ambos
+    string destino = 2;
+}
+
+message Empty{
+}
+
+service Torre{
+    rpc Aterrizar (Avion) returns (AterrizarReply) {}
+    rpc Despegar (Avion) returns (DespegarReply) {}
+}
+
+service Plane{
+    rpc Aterrizaje (AterrizarReply) returns (Empty) {}
+    rpc Despegue (DespegarReply) returns (Empty) {}
 }

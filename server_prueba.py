@@ -24,44 +24,132 @@ class Cola:
 
 class TorresServicer(Aeropuerto_pb2_grpc.TorresServicer):
 
-    def __init__ (self, torres, inicial):
+    def __init__ (self, torres, nombre, coladespegue, colallegada, pistas, gate):
         Torres = torres
-        inicial = inicial
+        nom = nombre
+        Pistas = pista
+        colallegada = colallegada
+        coladespegue = coladespegue
+        gateway = gate
 
-    def Despegar(self, request, context):
+    def Gate(self,request,context): #libera una pista de aterrizaje y avisa para aterrizar un avion y dejarlo asignado a una pista.!!!
+        gateway.append(request.codigo_avion)
+        p = 0
+        for i in Pistas["aterrizaje"]:
+            if i[0] == request.codigo_avion:
+                i = ["",0]
+                #LLamar al siguiente, enviando la pista que tiene que usar (p), sacandolo de la colallegada y asignandole la pista PISTAS.!!
+            else:
+                p += 1
+
+    #DEF DESPEGAR FINAL: saca de la pista, te hace despegar, y pone al siguiente en la pista y le avisa que puede despegar.
+
+    def Despegar(self, request, context): #comprobar condiciones, si hay espacio lo asigan a la pista de despegue, sino encola.
         print("Avion " + request.codigo_avion + " quiere despegar")
         print("Consultando destino...")
-        if (request.peso != 0 and request.combustible != 0):
-            #Consultar por pistas de despegue disponible (por hacer)
-            print("La pista de despegue asignada al avion " + request.codigo_avion + " es la 2 y la altura 5km")
-            response = Aeropuerto_pb2.Destino(destino = Torres[request.torre_control_destino])
+        if (request.pesoActual > request.peso):
+            response = Aeropuerto_pb2.DespegarReply(estado=-1, destino="")
             return response
 
+        elif(request.combustibleActual != request.combustible):
+            response = Aeropuerto_pb2.DespegarReply(estado=-2, destino="")
+            return response
+
+        elif(request.pesoActual > request.peso and request.combustibleActual != request.combustible):
+            response = Aeropuerto_pb2.DespegarReply(estado=-3, destino="")
+            return response
+
+        else:
+            #Consultar por pistas de despegue disponible
+            p = 0 #pista inicial
+            for i in Pistas["despegue"]: #[codigo,estado]
+                if i[1] != 1: #hay una pista
+                    if (coladespegue != [] and coladespegue.items[-1].codigo_avion == request.codigo_avion):#verifica si es su turno en la cola
+                        Pistas["despegue"][p] = [request.codigo_avion,1]
+                        print("La pista de despegue asignada al avion " + request.codigo_avion + " es la " + str(p))
+                        response = Aeropuerto_pb2.DespegarReply(estado=p, destino = Torres[request.torre_control_destino])
+                        coladespegue.avanzar()
+                        return response
+
+                    elif (coladespegue != [] and coladespegue.items[-1].codigo_avion != request.codigo_avion):
+                        response = Aeropuerto_pb2.DespegarReply(estado=0, destino="")
+                        return response
+
+                    else: #no hay nadie en cola y tiene espacio
+                        Pistas["despegue"][p] = [request.codigo_avion,1]
+                        print("La pista de despegue asignada al avion " + request.codigo_avion + " es la " + str(p))
+                        response = Aeropuerto_pb2.DespegarReply(estado=p, destino=Torres[request.torre_control_destino])
+                        return response
+
+                    Pistas["despegue"][p] = ["",0] #despega y libera la pista automaticamente.
+
+                else:
+                    p = p + 1
+
+            coladespegue.agregar(request)
+            response = Aeropuerto_pb2.DespegarReply(estado=0, destino="")
+            return response
+
+    def Aterrizar(self, request, context): #solo aterrizara si hay pistas, sino encola!!
+        print("Nuevo avion en el Aeropuerto")
+        print("Asignando pista de aterrizaje")
+        #consultas por pistas disponibles
+        p = 0
+        print(Pistas["aterrizaje"])
+        for i in Pistas["aterrizaje"]: #[codigo,estado]
+
+            if i[1] != 1: #si hay pista disponible
+                if colallegada.items != [] and colallegada.items[0].codigo_avion == request.codigo_avion: #verifica si es su turno en la cola
+                    Pistas["aterrizaje"][p] = [request.codigo_avion,1] #toma la pista el avion
+                    print("La pista de aterrizaje asiganada es la " + str(p+1))
+                    print(Pistas["aterrizaje"])
+                    response = Aeropuerto_pb2.AterrizarReply(altura=0, pista=p+1) #arreglar la altura asignada
+                    colallegada.avanzar()
+                    return response
+
+                else: #lo manda a una pista puesto no hay nadie en cola
+                    Pistas["aterrizaje"][p] = [request.codigo_avion,1]
+                    print("La pista de aterrizaje asiganada es la " + str(p+1))
+                    print(Pistas["aterrizaje"])
+                    response = Aeropuerto_pb2.AterrizarReply(altura=0, pista=p+1)
+                    return response
+            else: #pasa a la siguiente pista
+                p = p + 1
+
+        #agrega a la cola de llegada un avion,altura
+        if colallegada == [] #si no hay ninguno
+            item = [request,5]
+            colallegada.agregar(item)
+        else: #si ya existe uno lo deja volando +1
+            item = [request, colallegada.items[-1][1] + 1]
+            colallegada.agregar(item)
+
+        response = Aeropuerto_pb2.AterrizarReply(altura=item[1],pista=0)
+        return response
+
 Torres = dict()
-Inicial = []
+coladespegue = Cola()
+colallegada = Cola()
+Gate = []
 
 print("Bienvenido a la Torre de Control")
 print("Ingrese un IP valida: ")
 IP = str(input())
-Inicial.append(IP)
 print("[Torre de control] Nombre del Aeropuerto:")
 nombre = str(input())
-Inicial.append(nombre)
 print("[Torre de control - " + nombre + "] Cantidad pistas de aterrizaje:")
 pistas_a = int(input())
-Inicial.append(pistas_a)
 print("[Torre de control - " + nombre + "] Cantidad pistas de despegue:")
 pistas_d = int(input())
-Inicial.append(pistas_d)
 
 #crear diccionarios de pistas
 Pistas = dict()
 Pistas['aterrizaje'] = []
 Pistas['despegue'] = []
 for i in range(pistas_a):
-    Pistas['aterrizaje'].append(0)
+    Pistas['aterrizaje'].append(["",0])
 for i in range(pistas_d):
-    Pistas['despegue'].append(0)
+    Pistas['despegue'].append(["",0])
 
 print("Para agregar destino ingrese 1 || Para continuar ingrese 0")
 opcion = int(input())
@@ -84,7 +172,7 @@ while True:
 # create a gRPC server
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
-Aeropuerto_pb2_grpc.add_TorresServicer_to_server(TorresServicer(Torres, Inicial), server)
+Aeropuerto_pb2_grpc.add_TorresServicer_to_server(TorresServicer(Torres, nombre, coladespegue, colallegada, Pistas), server)
 
 # listen on port 50051
 print('Starting server')
