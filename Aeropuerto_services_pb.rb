@@ -2,18 +2,34 @@
 # Source: Aeropuerto.proto for package ''
 
 require 'grpc'
-require_relative 'Aeropuerto_pb'
+require 'Aeropuerto_pb'
 
-module Entrar
+module Torre
   class Service
 
     include GRPC::GenericService
 
     self.marshal_class_method = :encode
     self.unmarshal_class_method = :decode
-    self.service_name = 'Entrar'
+    self.service_name = 'Torre'
 
     rpc :Aterrizar, Avion, AterrizarReply
+    rpc :Despegar, Avion, DespegarReply
+  end
+
+  Stub = Service.rpc_stub_class
+end
+module Plane
+  class Service
+
+    include GRPC::GenericService
+
+    self.marshal_class_method = :encode
+    self.unmarshal_class_method = :decode
+    self.service_name = 'Plane'
+
+    rpc :Aterrizaje, AterrizarReply, Empty
+    rpc :Despegue, DespegarReply, Empty
   end
 
   Stub = Service.rpc_stub_class
