@@ -36,5 +36,5 @@ service Torre{
     rpc Aterrizar (Avion) returns (AterrizarReply) {}
     rpc Despegar (Avion) returns (DespegarReply) {}
     rpc Gate (Avion) returns (Empty) {}
-    rpc Salir (avion) returns (Empty) {}
+    rpc Salir (Avion) returns (Empty) {}
 }
