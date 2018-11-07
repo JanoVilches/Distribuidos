@@ -7,7 +7,7 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 import Aeropuerto_pb2
 import Aeropuerto_pb2_grpc
 
-class Entrar(Aeropuerto_pb2_grpc.EntrarServicer):
+class Torre(Aeropuerto_pb2_grpc.TorreServicer):
 
     def __init__ (self, aterrizaje, despegue, destinos):
         self.aterrizaje = aterrizaje
@@ -20,9 +20,9 @@ class Entrar(Aeropuerto_pb2_grpc.EntrarServicer):
     def Aterrizar(self, request, context):
         if self.aterrizaje > self.aterrizajeInUse:
             self.aterrizajeInUse+=1
-            temp = Aeropuerto_pb2.AterrizarReply(espera=0)
+            temp = Aeropuerto_pb2.AterrizarReply(altura=0)
         else:
-            temp = Aeropuerto_pb2.AterrizarReply(espera=(len(self.alturas)+1)*5)
+            temp = Aeropuerto_pb2.AterrizarReply(altura=(len(self.alturas)+1)*5)
             self.alturas.append((temp, request.codigo_avion))
         
         print(self.aterrizajeInUse)
@@ -34,7 +34,7 @@ aterrizar = 2
 despegue = 2
 destinos = []
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-Aeropuerto_pb2_grpc.add_EntrarServicer_to_server(Entrar(aterrizar, despegue, destinos), server)
+Aeropuerto_pb2_grpc.add_TorreServicer_to_server(Torre(aterrizar, despegue, destinos), server)
 server.add_insecure_port('[::]:50051')
 server.start()
 try:
