@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+message Avion {
+    string aerolinea = 1;
+    string codigo_avion = 2;
+    int32 peso = 3;
+    int32 combustible = 4;
+    string torre_control_destino = 5;
+    int32 combustibleActual = 6;
+    int32 pesoActual = 7;
+}
+
+message AterrizarReply{
+    int32 altura = 1;
+    int32 pista = 2;
+}
+
+message DespegarReply{
+    /*
+    0 espera
+    >0 pista
+    -1 peso
+    -2 comb
+    -3 ambos
+    */
+    int32 estado = 1;
+    string destino = 2;
+    int32 altura = 3;
+    string predecesor = 4;
+}
+
+message Empty{
+}
+
+service Torre{
+    rpc Aterrizar (Avion) returns (AterrizarReply) {}
+    rpc Despegar (Avion) returns (DespegarReply) {}
+    rpc Gate (Avion) returns (Empty) {}
+    rpc Salir (Avion) returns (Empty) {}
+}
